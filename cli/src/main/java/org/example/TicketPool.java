@@ -4,11 +4,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class TicketPool {
-    private final Queue<Integer> tickets;
+    private final Queue<Integer> tickets = new LinkedList<>();
     private final int capacity;
 
     public TicketPool(int capacity) {
-        this.tickets = new LinkedList<>();
         this.capacity = capacity;
     }
 
