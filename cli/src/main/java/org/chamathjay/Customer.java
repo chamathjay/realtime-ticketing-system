@@ -1,4 +1,4 @@
-package org.example;
+package org.chamathjay;
 
 public class Customer implements Runnable{
     private final TicketPool pool;
