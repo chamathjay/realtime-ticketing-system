@@ -4,14 +4,14 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class TicketPool {
-    private final Queue<Integer> tickets = new LinkedList<>();
+    private final Queue<String> tickets = new LinkedList<>();
     private final int capacity;
 
     public TicketPool(int capacity) {
         this.capacity = capacity;
     }
 
-    public synchronized void addTicket(int ticketId, int vendorId) throws InterruptedException {
+    public synchronized void addTicket(String ticketId, int vendorId) throws InterruptedException {
         while (tickets.size() >= capacity) {
             try {
                 System.out.println("Ticket pool is full, waiting...");
@@ -25,7 +25,7 @@ public class TicketPool {
         notifyAll();
     }
 
-    public synchronized int removeTicket(int customerId) throws InterruptedException {
+    public synchronized void removeTicket(int customerId) throws InterruptedException {
         try {
             while (tickets.isEmpty()) {
                 wait();
@@ -33,11 +33,9 @@ public class TicketPool {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        int ticketId = tickets.poll();
+        String ticketId = tickets.poll();
         System.out.println("Customer " + customerId + " bought ticket: " + ticketId);
         notifyAll();
-        return ticketId;
-
     }
 
 }
