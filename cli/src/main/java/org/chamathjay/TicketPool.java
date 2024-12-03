@@ -1,10 +1,9 @@
 package org.chamathjay;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class TicketPool {
-    private final Queue<String> tickets = new LinkedList<>();
+    private final List<String> tickets = Collections.synchronizedList(new ArrayList<>());
     private final int capacity;
 
     public TicketPool(int capacity) {
@@ -33,7 +32,7 @@ public class TicketPool {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        String ticketId = tickets.poll();
+        String ticketId = tickets.removeFirst();
         System.out.println("Customer " + customerId + " bought ticket: " + ticketId);
         notifyAll();
     }
