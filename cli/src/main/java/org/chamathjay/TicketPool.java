@@ -22,9 +22,10 @@ public class TicketPool {
         }
         tickets.add(ticketId);
         System.out.println("Vendor " + vendorId + " added ticket: " + ticketId);
+        notifyAll();
     }
 
-    public synchronized int buyTicket(int customerId) throws InterruptedException {
+    public synchronized int removeTicket(int customerId) throws InterruptedException {
         try {
             while (tickets.isEmpty()) {
                 wait();
@@ -34,6 +35,7 @@ public class TicketPool {
         }
         int ticketId = tickets.poll();
         System.out.println("Customer " + customerId + " bought ticket: " + ticketId);
+        notifyAll();
         return ticketId;
 
     }

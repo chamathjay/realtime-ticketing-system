@@ -14,26 +14,30 @@ public class Main {
 
         TicketPool pool = new TicketPool(poolCapacity);
 
-        Thread vendor1 = new Thread(new Vendor(pool, 1, ticketReleaseRate));
-        Thread vendor2 = new Thread(new Vendor(pool, 2, ticketReleaseRate));
+        int vendorCount = 2;
+        int customerCount = 3;
 
-        Thread customer1 = new Thread(new Customer(pool, 1, ticketRetrievalRate));
-        Thread customer2 = new Thread(new Customer(pool, 2, ticketRetrievalRate));
-        Thread customer3 = new Thread(new Customer(pool, 3, ticketRetrievalRate));
+        Thread[] vendorThreads = new Thread[vendorCount];
+        for(int i = 0; i < vendorCount; i++) {
+            vendorThreads[i] = new Thread(new Vendor(pool, i + 1));
+            vendorThreads[i].start();
+        }
+        Thread[] customerThreads = new Thread[customerCount];
+        for(int i = 0; i < customerCount; i++) {
+            customerThreads[i] = new Thread(new Customer(pool, i + 1));
+            customerThreads[i].start();
+        }
 
-        vendor1.start();
-        vendor2.start();
-
-        customer1.start();
-        customer2.start();
-        customer3.start();
 
         try {
-            vendor1.join();
-            vendor2.join();
-            customer1.join();
-            customer2.join();
-            customer3.join();
+            for (Thread vendor : vendorThreads) {
+                vendor.join();
+            }
+
+            for (Thread customer : customerThreads) {
+                customer.join();
+            }
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.out.println("Main thread interrupted.");

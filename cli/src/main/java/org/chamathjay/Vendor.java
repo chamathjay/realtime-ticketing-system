@@ -1,15 +1,15 @@
 package org.chamathjay;
 
 public class Vendor implements Runnable {
-    private final TicketPool pool;
-    private final int vendorId;
-    private static int ticketId;
-    private final int ticketReleaseRate;
+    private TicketPool pool;
+    private int vendorId;
+    private int ticketId;
+    private int ticketReleaseRate;
 
-    public Vendor(TicketPool pool, int vendorId, int ticketReleaseRate) {
+    public Vendor(TicketPool pool, int vendorId) {
         this.pool = pool;
         this.vendorId = vendorId;
-        this.ticketReleaseRate = ticketReleaseRate;
+//        this.ticketReleaseRate = ticketReleaseRate;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class Vendor implements Runnable {
                 throw new RuntimeException(e);
             }
             try {
-                Thread.sleep(1500);
+                Thread.sleep(ticketReleaseRate * 1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 System.out.println("Vendor " + vendorId + " was interrupted");

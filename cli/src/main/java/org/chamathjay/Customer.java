@@ -1,23 +1,23 @@
 package org.chamathjay;
 
 public class Customer implements Runnable{
-    private final TicketPool pool;
-    private final int customerId;
-    private final int ticketRetrievalRate;
+    private TicketPool pool;
+    private int customerId;
+    private int ticketRetrievalRate;
 
-    public Customer(TicketPool pool, int customerId, int ticketRetrievalRate) {
+    public Customer(TicketPool pool, int customerId) {
         this.pool = pool;
         this.customerId = customerId;
-        this.ticketRetrievalRate = ticketRetrievalRate;
+//        this.ticketRetrievalRate = ticketRetrievalRate;
     }
 
     @Override
     public void run() {
         while(true){
             try {
-                pool.buyTicket(customerId);
+                pool.removeTicket(customerId);
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(ticketRetrievalRate * 1000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
