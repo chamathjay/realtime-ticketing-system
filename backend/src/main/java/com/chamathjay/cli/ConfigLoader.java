@@ -1,4 +1,4 @@
-package org.chamathjay.cli;
+package com.chamathjay.cli;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;

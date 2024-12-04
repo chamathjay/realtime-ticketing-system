@@ -1,4 +1,4 @@
-package org.chamathjay.cli;
+package com.chamathjay.cli;
 
 public class Config {
     private int totalTickets;

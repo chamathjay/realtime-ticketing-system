@@ -1,4 +1,4 @@
-package org.chamathjay.cli;
+package com.chamathjay.cli;
 
 import java.util.Collections;
 import java.util.LinkedList;

@@ -1,4 +1,4 @@
-package org.chamathjay.cli;
+package com.chamathjay.cli;
 
 import java.util.Scanner;
 
@@ -34,33 +34,33 @@ public class Main {
         int vendorCount = 4;
         int customerCount = 4;
 
-        Thread[] vendorThreads = new Thread[vendorCount];
-        for(int i = 0; i < vendorCount; i++) {
-            vendorThreads[i] = new Thread(new Vendor(pool, i + 1, config.getTicketReleaseRate()));
-            vendorThreads[i].start();
-        }
-        Thread[] customerThreads = new Thread[customerCount];
-        for(int i = 0; i < customerCount; i++) {
-            customerThreads[i] = new Thread(new Customer(pool, i + 1, config.getCustomerRetrievalRate()));
-            customerThreads[i].start();
-        }
+//        Thread[] vendorThreads = new Thread[vendorCount];
+//        for(int i = 0; i < vendorCount; i++) {
+//            vendorThreads[i] = new Thread(new Vendor(pool, i + 1, config.getTicketReleaseRate()));
+//            vendorThreads[i].start();
+//        }
+//        Thread[] customerThreads = new Thread[customerCount];
+//        for(int i = 0; i < customerCount; i++) {
+//            customerThreads[i] = new Thread(new Customer(pool, i + 1, config.getCustomerRetrievalRate()));
+//            customerThreads[i].start();
+//        }
 
 
 //        lochana
 
-//        Vendor[] vendors = new Vendor[5];  //Array of vendors
-//        for (int i = 0; i < vendors.length; i++) {
-//            vendors[i] = new Vendor(pool, i, config.getTicketReleaseRate());
-//            Thread vendorThread = new Thread(vendors[i]);
-//            vendorThread.start();
-//        }
-//
-//        Customer[] customers = new Customer[5];//Array of customers
-//        for (int i = 0; i < 5; i++) {
-//            customers[i] = new Customer(pool, i, config.getCustomerRetrievalRate());
-//            Thread customerThread = new Thread(customers[i]);
-//            customerThread.start();
-//        }
+        Vendor[] vendors = new Vendor[vendorCount];  //Array of vendors
+        for (int i = 0; i < vendors.length; i++) {
+            vendors[i] = new Vendor(pool, i, config.getTicketReleaseRate());
+            Thread vendorThread = new Thread(vendors[i]);
+            vendorThread.start();
+        }
+
+        Customer[] customers = new Customer[customerCount];//Array of customers
+        for (int i = 0; i < 5; i++) {
+            customers[i] = new Customer(pool, i, config.getCustomerRetrievalRate());
+            Thread customerThread = new Thread(customers[i]);
+            customerThread.start();
+        }
 
 
 //        try {

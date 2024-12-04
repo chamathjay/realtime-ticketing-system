@@ -1,4 +1,4 @@
-package org.chamathjay.cli;
+package com.chamathjay.cli;
 
 public class Customer implements Runnable {
     private final TicketPool pool;
