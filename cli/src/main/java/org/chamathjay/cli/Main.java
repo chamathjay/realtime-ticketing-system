@@ -1,4 +1,4 @@
-package org.chamathjay;
+package org.chamathjay.cli;
 
 import java.util.Scanner;
 
@@ -10,20 +10,18 @@ public class Main {
         System.out.print("Do you want to load parameters from the config file? (y/N): ");
         String choice = sc.next();
 
-        if(choice.equalsIgnoreCase("y")) {
+        if (choice.equalsIgnoreCase("y")) {
             config = ConfigLoader.loadConfig();
             if (config == null || !config.isValid()) {
                 System.err.println("Invalid config file, switching to manual input...");
                 config = ConfigLoader.getConfigFromUser(sc);
                 ConfigLoader.saveConfig(config);
-                System.out.println("Successfully saved to config file!");
             } else {
                 System.out.println("Successfully loaded config file!");
             }
         } else {
             config = ConfigLoader.getConfigFromUser(sc);
             ConfigLoader.saveConfig(config);
-            System.out.println("Successfully saved to config file!");
         }
 
         if (!config.isValid()) {
@@ -31,10 +29,10 @@ public class Main {
             return;
         }
 
-        TicketPool pool = new TicketPool(config.getMaxTicketCapacity());
+        TicketPool pool = new TicketPool(config.getMaxTicketCapacity(), config.getTotalTickets());
 
-        int vendorCount = 2;
-        int customerCount = 3;
+        int vendorCount = 4;
+        int customerCount = 4;
 
         Thread[] vendorThreads = new Thread[vendorCount];
         for(int i = 0; i < vendorCount; i++) {
@@ -43,25 +41,43 @@ public class Main {
         }
         Thread[] customerThreads = new Thread[customerCount];
         for(int i = 0; i < customerCount; i++) {
-            customerThreads[i] = new Thread(new Customer(pool, i + 1));
+            customerThreads[i] = new Thread(new Customer(pool, i + 1, config.getCustomerRetrievalRate()));
             customerThreads[i].start();
         }
 
 
-        try {
-            for (Thread vendor : vendorThreads) {
-                vendor.join();
-            }
+//        lochana
 
-            for (Thread customer : customerThreads) {
-                customer.join();
-            }
+//        Vendor[] vendors = new Vendor[5];  //Array of vendors
+//        for (int i = 0; i < vendors.length; i++) {
+//            vendors[i] = new Vendor(pool, i, config.getTicketReleaseRate());
+//            Thread vendorThread = new Thread(vendors[i]);
+//            vendorThread.start();
+//        }
+//
+//        Customer[] customers = new Customer[5];//Array of customers
+//        for (int i = 0; i < 5; i++) {
+//            customers[i] = new Customer(pool, i, config.getCustomerRetrievalRate());
+//            Thread customerThread = new Thread(customers[i]);
+//            customerThread.start();
+//        }
 
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.out.println("Main thread interrupted.");
-        }
+
+//        try {
+//            for (Thread vendor : vendorThreads) {
+//                vendor.join();
+//            }
+//
+//            for (Thread customer : customerThreads) {
+//                customer.join();
+//            }
+//
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//            System.out.println("Main thread interrupted.");
+//        }
 
         System.out.println("Ticket processing complete.");
+        sc.close();
     }
 }
