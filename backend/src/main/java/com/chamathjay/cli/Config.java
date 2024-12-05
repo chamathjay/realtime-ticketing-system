@@ -33,13 +33,13 @@ public class Config {
     }
 
     public boolean isValid() {
-        boolean isValid = totalTickets >= 0 && ticketReleaseRate > 0 && customerRetrievalRate > 0 && maxTicketCapacity > totalTickets;
+        boolean isValid = totalTickets > 0 && ticketReleaseRate > 0 && customerRetrievalRate > 0
+                && maxTicketCapacity > 0 && totalTickets >= maxTicketCapacity;
         if (!isValid) {
-            System.err.println("Invalid Config: Ensure totalTickets > 0, ticketReleaseRate > 0, ticketRetrievalRate > 0, and capacity > totalTickets.");
+            System.err.println("Invalid Config: Ensure totalTickets >= maxTicketCapacity, and all values are positive.");
         }
         return isValid;
     }
-
     @Override
     public String toString() {
         return "Config {" + "\n" + "totalTickets=" + totalTickets + "\n" +

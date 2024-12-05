@@ -14,6 +14,7 @@ public class Vendor implements Runnable {
     }
 
     public void stop() {
+
         isRunning = false;
     }
 
@@ -21,7 +22,11 @@ public class Vendor implements Runnable {
     public void run() {
         while (isRunning) {
             try {
-                String ticketId = vendorId + "-" + (++ticketCount);
+                if (pool.getTotalTicketsRemaining() <= 0) {
+                    System.out.println("Vendor- " + vendorId + " stopping, no tickets remaining.");
+                    break;
+                }
+                int ticketId = (++ticketCount);
                 Thread.sleep(1000 * ticketReleaseRate);
                 pool.addTicket(ticketId, vendorId);
             } catch (InterruptedException e) {
