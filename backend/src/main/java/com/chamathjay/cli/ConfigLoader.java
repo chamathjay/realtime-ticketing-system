@@ -44,7 +44,7 @@ public class ConfigLoader {
 //    static boolean validInput = false;
 
     public static Config getConfigFromUser(Scanner sc) {
-        int totalTickets = 0, ticketReleaseRate = 0, customerRetrievalRate = 0, maxTicketCapacity = 0;
+        int totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity;
 
         while (true) {
             try {

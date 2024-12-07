@@ -1,13 +1,12 @@
 package com.chamathjay.cli;
 
 import com.chamathjay.realtime_ticketing_backend.RealtimeTicketingBackendApplication;
-import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Main {
+public class MainCLI {
 //    private static volatile boolean isRunning = true;
 
     public static void main(String[] args) {

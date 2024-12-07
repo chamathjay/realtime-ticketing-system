@@ -1,5 +1,8 @@
 package com.chamathjay.cli;
 
+import lombok.Getter;
+
+@Getter
 public class Config {
     private int totalTickets;
     private int ticketReleaseRate;
@@ -16,23 +19,7 @@ public class Config {
         this.maxTicketCapacity = maxTicketCapacity;
     }
 
-    public int getTotalTickets() {
-        return totalTickets;
-    }
-
-    public int getTicketReleaseRate() {
-        return ticketReleaseRate;
-    }
-
-    public int getCustomerRetrievalRate() {
-        return customerRetrievalRate;
-    }
-
-    public int getMaxTicketCapacity() {
-        return maxTicketCapacity;
-    }
-
-//    public boolean isValid() {
+    //    public boolean isValid() {
 //        boolean isValid;
 //        if (!isValid) {
 //            System.err.println("Invalid Config: Ensure totalTickets >= maxTicketCapacity, and all values are positive.");
