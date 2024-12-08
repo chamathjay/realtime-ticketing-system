@@ -8,13 +8,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TicketPool {
     private final List<Integer> tickets;
     private final int capacity;
     private int totalTicketsRemaining;
-    private int nextTicketId = (1);
+    private int nextTicketId = 1;
     private static final String LOG_FILE = "tickets_log.txt";
 
     public TicketPool(int capacity, int totalTickets) {
@@ -37,7 +36,6 @@ public class TicketPool {
             }
             int ticketId = nextTicketId++;
             tickets.add(ticketId);
-//            ticketId.getAndIncrement();
             totalTicketsRemaining--;
             System.out.println("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
             writeLog("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());

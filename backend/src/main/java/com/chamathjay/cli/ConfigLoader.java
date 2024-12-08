@@ -19,7 +19,7 @@ public class ConfigLoader {
         try (FileReader reader = new FileReader(CONFIG_FILE_PATH)) {
             Config config = gson.fromJson(reader, Config.class);
 
-            if (config != null && config.getMaxTicketCapacity() > 0 && config.getTicketReleaseRate() > 0 && config.getCustomerRetrievalRate() > 0 && config.getTotalTickets() >= config.getMaxTicketCapacity()) {
+            if (config != null && validateConfig(config)) {
                 return config;
             } else {
                 System.err.println("Invalid config file.");
@@ -41,38 +41,44 @@ public class ConfigLoader {
         }
     }
 
-//    static boolean validInput = false;
-
     public static Config getConfigFromUser(Scanner sc) {
-        int totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity;
 
-        while (true) {
+        System.out.println("------------------------------------------------------------");
+        int totalTickets = getPositiveInput(sc, "Enter Total Tickets: ");
+        int ticketReleaseRate = getPositiveInput(sc, "Enter Ticket Release Rate: ");
+        int customerRetrievalRate = getPositiveInput(sc, "Enter Customer Ticket Retrieval Rate: ");
+        int maxTicketCapacity;
+        do {
+            maxTicketCapacity = getPositiveInput(sc, "Enter Maximum Ticket Capacity: ");
+
+        } while (maxTicketCapacity > totalTickets);
+        System.out.println("------------------------------------------------------------");
+
+        return new Config(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity);
+    }
+
+    private static int getPositiveInput(Scanner sc, String prompt) {
+        int value = -1;
+        while (value <= 0) {
             try {
-
-                System.out.print("Enter Total Tickets: ");
-                totalTickets = sc.nextInt();
-
-                System.out.print("Enter Ticket Release Rate: ");
-                ticketReleaseRate = sc.nextInt();
-
-                System.out.print("Enter Customer Ticket Retrieval Rate: ");
-                customerRetrievalRate = sc.nextInt();
-
-                System.out.print("Enter Maximum Ticket Capacity: ");
-                maxTicketCapacity = sc.nextInt();
-
-                if (ticketReleaseRate > 0 && customerRetrievalRate > 0 && maxTicketCapacity > 0 && totalTickets >= maxTicketCapacity) {
-                    return new Config(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity);
-                } else {
-                    System.err.println("invalid input: Total tickets must be >= max capacity, and all values must be positive. Please try again.");
-                    sc.nextLine();
+                System.out.print(prompt);
+                value = sc.nextInt();
+                if (value < 0) {
+                    System.err.println("Value must be greater than 0. Please try again.");
                 }
             } catch (InputMismatchException e) {
-                System.err.println("invalid input: Please enter integers only. Try again.");
+                System.err.println("Invalid input: Please enter a valid integer.");
                 sc.nextLine();
             }
         }
+        return value;
+    }
 
+    private static boolean validateConfig(Config config) {
+        return config.getTotalTickets() > 0 &&
+                config.getTicketReleaseRate() > 0 &&
+                config.getCustomerRetrievalRate() > 0 &&
+                config.getMaxTicketCapacity() <= config.getTotalTickets() ;
     }
 
 }
