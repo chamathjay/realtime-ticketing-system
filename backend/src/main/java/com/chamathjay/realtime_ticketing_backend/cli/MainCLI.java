@@ -1,4 +1,4 @@
-package com.chamathjay.cli;
+package com.chamathjay.realtime_ticketing_backend.cli;
 
 import com.chamathjay.realtime_ticketing_backend.RealtimeTicketingBackendApplication;
 import org.springframework.boot.SpringApplication;
