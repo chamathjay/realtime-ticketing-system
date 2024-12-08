@@ -7,20 +7,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MainCLI {
-//    private static volatile boolean isRunning = true;
 
     public static void main(String[] args) {
-
-//        isRunning = true;
-//        Thread monitorThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("Press Enter at any time to stop the simulation.");
-//                sc.nextLine();
-//                isRunning = false;
-//            }
-//        });
-//        monitorThread.start();
 
         try (Scanner sc = new Scanner(System.in)) {
             Config config;
@@ -100,12 +88,6 @@ public class MainCLI {
             sc.nextLine();
             sc.nextLine();
 
-            for (Vendor vendor : vendors) {
-                vendor.stop();
-            }
-            for (Customer customer : customers) {
-                customer.stop();
-            }
 
             System.out.println("Ticket processing complete.");
             TicketPool.writeLog("Ticket processing complete.");

@@ -8,12 +8,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TicketPool {
     private final List<Integer> tickets;
     private final int capacity;
     private int totalTicketsRemaining;
-
+    private int nextTicketId = (1);
     private static final String LOG_FILE = "tickets_log.txt";
 
     public TicketPool(int capacity, int totalTickets) {
@@ -22,7 +23,7 @@ public class TicketPool {
         this.totalTicketsRemaining = totalTickets;
     }
 
-    public void addTicket(int ticketId, int vendorId) throws InterruptedException {
+    public void addTicket(int vendorId) throws InterruptedException {
         synchronized (tickets) {
             while (tickets.size() >= capacity || totalTicketsRemaining <= 0) {
                 if (totalTicketsRemaining <= 0) {
@@ -34,7 +35,9 @@ public class TicketPool {
                 writeLog("Vendor-" + vendorId + " tried to add tickets but the pool is full, waiting...");
                 tickets.wait();
             }
+            int ticketId = nextTicketId++;
             tickets.add(ticketId);
+//            ticketId.getAndIncrement();
             totalTicketsRemaining--;
             System.out.println("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
             writeLog("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
@@ -74,5 +77,3 @@ public class TicketPool {
 
     }
 }
-
-
