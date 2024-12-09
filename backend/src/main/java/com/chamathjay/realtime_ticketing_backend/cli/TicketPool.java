@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TicketPool {
     private List<Integer> tickets;
@@ -16,6 +18,10 @@ public class TicketPool {
     private int nextTicketId = 1;
 
     private static final String LOG_FILE = "tickets_log.txt";
+
+    private ReentrantLock lock = new ReentrantLock();
+    private final Condition notFull = lock.newCondition();
+    private final Condition notEmpty = lock.newCondition();
 
     public TicketPool(List<Integer> tickets, int capacity) {
         this.tickets = tickets;
@@ -33,7 +39,8 @@ public class TicketPool {
     }
 
     public void addTicket(int vendorId) throws InterruptedException {
-        synchronized (tickets) {
+        lock.lock();
+        try {
             while (tickets.size() >= capacity || totalTicketsRemaining <= 0) {
                 if (totalTicketsRemaining <= 0) {
                     System.out.println("Vendor-" + (vendorId) + " tried to add tickets but no tickets available.");
@@ -42,29 +49,34 @@ public class TicketPool {
                 }
                 System.out.println("Vendor-" + vendorId + " tried to add tickets but the pool is full, waiting...");
                 writeLog("Vendor-" + vendorId + " tried to add tickets but the pool is full, waiting...");
-                tickets.wait();
+                notFull.await();
             }
             int ticketId = nextTicketId++;
             tickets.add(ticketId);
             totalTicketsRemaining--;
             System.out.println("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
             writeLog("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
-            tickets.notifyAll();
+            notEmpty.signalAll();
+        } finally {
+            lock.unlock();
         }
     }
 
 
     public void removeTicket(int customerId) throws InterruptedException {
-        synchronized (tickets) {
+        lock.lock();
+        try{
             while (tickets.isEmpty()) {
                 System.out.println("Customer-" + customerId + " tried to buy a ticket but the pool is empty, waiting...");
                 writeLog("Customer-" + customerId + " tried to buy a ticket but the pool is empty, waiting...");
-                tickets.wait();
+                notEmpty.await();
             }
             int ticketId = tickets.remove(0);
             System.out.println("Customer " + customerId + " bought ticket: " + ticketId + ", Tickets available: " + tickets.size());
             writeLog("Customer " + customerId + " bought ticket: " + ticketId + ", Tickets available: " + tickets.size());
-            tickets.notifyAll();
+            notFull.signalAll();
+        } finally {
+            lock.unlock();
         }
     }
 
