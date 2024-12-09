@@ -1,38 +1,25 @@
 package com.chamathjay.realtime_ticketing_backend.Models;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 public class Ticket {
+    @Getter
     @Id
-    @GeneratedValue
     private Long id;
-    private String ticket;
-    private boolean isAvailable;
+    @Getter
+    @Setter
+    private String vendor;
+    @Setter
+    private boolean available = true;
 
-    public Long getId() {
-        return id;
+    public Ticket() {}
+
+    public Ticket(String vendor) {
+        this.vendor = vendor;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(String ticket) {
-        this.ticket = ticket;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(boolean available) {
-        isAvailable = available;
-    }
 }
