@@ -10,16 +10,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TicketPool {
-    private final List<Integer> tickets;
-    private final int capacity;
+    private List<Integer> tickets;
+    private int capacity;
     private int totalTicketsRemaining;
     private int nextTicketId = 1;
+
     private static final String LOG_FILE = "tickets_log.txt";
+
+    public TicketPool(List<Integer> tickets, int capacity) {
+        this.tickets = tickets;
+        this.capacity = capacity;
+    }
 
     public TicketPool(int capacity, int totalTickets) {
         this.capacity = capacity;
         this.tickets = Collections.synchronizedList(new LinkedList<>());
         this.totalTicketsRemaining = totalTickets;
+    }
+
+    public TicketPool() {
+
     }
 
     public void addTicket(int vendorId) throws InterruptedException {
