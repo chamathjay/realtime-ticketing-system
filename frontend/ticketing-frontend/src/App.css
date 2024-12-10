@@ -1,5 +1,7 @@
-#root {
+body {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: Arial, sans-serif;
   text-align: center;
 }
@@ -7,8 +9,8 @@
 .container {
   display: flex;
   justify-content: space-between;
-  height: 100vh;
-  padding: 20px;
+  min-height: 100vh;
+  /* padding: 2rem; */
 }
 
 .config-panel {
@@ -17,6 +19,10 @@
   flex-direction: column;
   align-items: center;
   background-color: #f0f0f0;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: max-content;
 }
 
 .input-section {
@@ -24,28 +30,31 @@
   flex-wrap: wrap;
   flex-direction: column;
   gap: 10px;
-  width: 750px;
+  /* width: 750px; */
   margin-bottom: 20px;
 }
 
 .input-section label {
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
-  width: 750;
+  gap: 1rem;
+  /* width: 50vw; */
 }
 
 .input-section input {
   padding: 10px;
   font-size: 16px;
-  width: 250px;
+  width: 75vw;
 }
 
 .button-section {
   display: flex;
-  gap: 10px;
+  gap: 1rem;
 }
 
 button {
+  flex: 1;
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
