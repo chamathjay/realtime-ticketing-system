@@ -18,9 +18,9 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final TicketPool pool;
-    private final Config config = new Config();
+//    private final Config config = new Config();
 
-    private final List<String> logs = new ArrayList<>();
+//    private final List<String> logs = new ArrayList<>();
     private boolean simulationRunning = false;
 
     public TicketService(TicketRepository ticketRepository) {
@@ -28,43 +28,56 @@ public class TicketService {
         this.pool = new TicketPool();
     }
 
-    public void startSimulation() {
+    int vendorCount = 4;
+    int customerCount = 4;
+
+    Thread[] vendorThreads = new Thread[vendorCount];
+    Vendor[] vendors = new Vendor[vendorCount];
+
+    Thread[] customerThreads = new Thread[customerCount];
+    Customer[] customers = new Customer[customerCount];
+
+    public void startSimulation(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketCapacity) {
         if (!simulationRunning) {
             simulationRunning = true;
-            logs.add("Simulation started at " + LocalDateTime.now());
+            TicketPool.writeLog("Simulation started.");
         }
-
-        int vendorCount = 4;
-        int customerCount = 4;
-
-        Thread[] vendorThreads = new Thread[vendorCount];
-        Vendor[] vendors = new Vendor[vendorCount];
 
         for (int i = 0; i < vendorCount; i++) {
-            vendors[i] = new Vendor(pool, i + 1, config.getTicketReleaseRate());
+            vendors[i] = new Vendor(pool, i + 1, ticketReleaseRate);
             vendorThreads[i] = new Thread(vendors[i]);
             vendorThreads[i].start();
-            logs.add("Vendor thread " + (i + 1) + " started.");
+            TicketPool.writeLog("Vendor thread " + (i + 1) + " started.");
         }
 
-        Thread[] customerThreads = new Thread[customerCount];
-        Customer[] customers = new Customer[customerCount];
 
         for (int i = 0; i < customerCount; i++) {
-            customers[i] = new Customer(pool, i + 1, config.getCustomerRetrievalRate());
+            customers[i] = new Customer(pool, i + 1, customerRetrievalRate);
             customerThreads[i] = new Thread(customers[i]);
             customerThreads[i].start();
-            logs.add("Customer thread " + (i + 1) + " started.");
+            TicketPool.writeLog("Customer thread " + (i + 1) + " started.");
         }
 
     }
+
     public void stopSimulation() {
         if (simulationRunning) {
             simulationRunning = false;
-            logs.add("Simulation stopped at " + LocalDateTime.now());
+
+            for (Vendor vendor : vendors) {
+                vendor.stop();
+            }
+            for (Customer customer : customers) {
+                customer.stop();
+            }
+
+            TicketPool.writeLog("Simulation stopped.");
         }
     }
 
+    public void reset() {
+//        logs.clear();
+    }
 
 //    public String addTicket(int count, String vendor){
 //        for (int i = 0; i < count; i++) {
@@ -94,13 +107,14 @@ public class TicketService {
         return ticketRepository.findAll();
     }
 
-    @Scheduled(fixedRate = 2000)
-    public void generateLogs() {
-        if (simulationRunning) {
-            logs.add("Generated log at " + LocalDateTime.now());
-        }
-    }
+//    @Scheduled(fixedRate = 2000)
+//    public void generateLogs() {
+//        if (simulationRunning) {
+//            logs.add("Generated log at " + LocalDateTime.now());
+//        }
+//    }
+
     public List<String> getLogs() {
-        return new ArrayList<>(logs);
+        return new ArrayList<>();
     }
 }

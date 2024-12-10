@@ -1,8 +1,5 @@
 package com.chamathjay.realtime_ticketing_backend.cli;
 
-import com.chamathjay.realtime_ticketing_backend.RealtimeTicketingBackendApplication;
-import org.springframework.boot.SpringApplication;
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -14,9 +11,6 @@ public class MainCLI {
             Config config;
             System.out.println("Starting Ticketing System...");
             TicketPool.writeLog("Ticketing System Started");
-            SpringApplication app = new SpringApplication(RealtimeTicketingBackendApplication.class);
-
-//        app.setBannerMode(Banner.Mode.OFF);
 
             System.out.print("Do you want to load parameters from the config file? (y/N): ");
             String choice = sc.next();
@@ -36,8 +30,6 @@ public class MainCLI {
                 config = ConfigLoader.getConfigFromUser(sc);
                 ConfigLoader.saveConfig(config);
             }
-
-//            ConfigLoader.getConfigFromUser(sc);
 
             System.out.print("Press Enter to start the simulation...");
             sc.nextLine();

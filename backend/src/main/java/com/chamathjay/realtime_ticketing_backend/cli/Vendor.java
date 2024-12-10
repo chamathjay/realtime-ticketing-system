@@ -4,6 +4,7 @@ public class Vendor implements Runnable {
     private final TicketPool pool;
     private final int vendorId;
     private final int ticketReleaseRate;
+    private boolean running = true;
 
     public Vendor(TicketPool pool, int vendorId, int ticketReleaseRate) {
         this.pool = pool;
@@ -11,9 +12,13 @@ public class Vendor implements Runnable {
         this.ticketReleaseRate = ticketReleaseRate;
     }
 
+    public void stop() {
+        this.running = false;
+    }
+
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             try {
                 if (pool.getTotalTicketsRemaining() <= 0) {
                     System.out.println("Vendor- " + vendorId + " stopping, no tickets remaining.");

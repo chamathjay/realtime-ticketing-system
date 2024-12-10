@@ -4,6 +4,7 @@ public class Customer implements Runnable {
     private final TicketPool pool;
     private final int customerId;
     private final int customerRetrievalRate;
+    private boolean running = true;
 
     public Customer(TicketPool pool, int customerId, int customerRetrievalRate) {
         this.pool = pool;
@@ -11,9 +12,13 @@ public class Customer implements Runnable {
         this.customerRetrievalRate = customerRetrievalRate;
     }
 
+    public void stop(){
+        running = false;
+    }
+
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             try {
                 Thread.sleep(1000 * customerRetrievalRate);
                 pool.removeTicket(customerId);
