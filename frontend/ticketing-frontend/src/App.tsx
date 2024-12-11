@@ -7,12 +7,8 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <div className="config-container">
-        <ConfigPanel logs={logs} setLogs={setLogs} />
-      </div>
-      <div className="logs-container">
-        <Logs logs={logs} />
-      </div>
+      <ConfigPanel logs={logs} setLogs={setLogs} />
+      <Logs logs={logs} />
     </div>
   );
 };

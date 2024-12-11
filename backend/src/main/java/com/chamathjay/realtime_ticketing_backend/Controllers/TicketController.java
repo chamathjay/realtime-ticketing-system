@@ -1,18 +1,23 @@
 package com.chamathjay.realtime_ticketing_backend.Controllers;
 
+import com.chamathjay.realtime_ticketing_backend.Models.TicketStatus;
 import com.chamathjay.realtime_ticketing_backend.Services.TicketService;
 import com.chamathjay.realtime_ticketing_backend.cli.Config;
 import com.chamathjay.realtime_ticketing_backend.cli.TicketPool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ticketing")
 @CrossOrigin
 public class TicketController {
-    private final TicketService ticketService;
+    @Autowired
+    private TicketService ticketService;
 
     @Autowired
     public TicketController(TicketService ticketService) {
@@ -27,7 +32,7 @@ public class TicketController {
                 config.getCustomerRetrievalRate(),
                 config.getMaxTicketCapacity()
         );
-        TicketPool.writeLog("Simulation started.");
+        TicketPool.writeLog("Simulation started with parameters: " + config);
         return "Simulation started.";
     }
 
@@ -39,8 +44,9 @@ public class TicketController {
     }
 
     @GetMapping("/status")
-    public String getTicketStatus() {
-        return "Tickets available: " + ticketService.getAllTickets();
+    public ResponseEntity<TicketStatus> getStatus() {
+        TicketStatus status = ticketService.getTicketStatus();
+        return ResponseEntity.ok(status);
     }
 
     @GetMapping("/logs")
@@ -50,8 +56,8 @@ public class TicketController {
     }
 
     @PostMapping("/reset")
-    public String resetSimulation() {
+    public ResponseEntity<Void> resetSimulation() {
         ticketService.reset();
-        return "Simulation reset successfully.";
+        return ResponseEntity.ok().build();
     }
 }

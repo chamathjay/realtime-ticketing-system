@@ -21,7 +21,7 @@ public class Vendor implements Runnable {
         while (running) {
             try {
                 Thread.sleep( 1000 * config.getTicketReleaseRate());
-                if (pool.getTotalTicketsRemaining() <= 0) {
+                if (pool.getTicketsRemaining() <= 0) {
                     System.out.println("Vendor- " + vendorId + " stopping, no tickets remaining.");
                     break;
                 }

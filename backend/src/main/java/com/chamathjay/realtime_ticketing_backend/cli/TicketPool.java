@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class TicketPool {
     private final List<Integer> tickets;
     private int maxTicketCapacity;
-    private int totalTicketsRemaining;
+    private int ticketsRemaining;
 
     private final AtomicInteger nextTicketId = new AtomicInteger(1);
     public static final List<String> inMemoryLogs = Collections.synchronizedList(new LinkedList<>());
@@ -24,21 +24,24 @@ public class TicketPool {
     private final Condition notFull = lock.newCondition();
     private final Condition notEmpty = lock.newCondition();
 
+    public int ticketsSold;
+    public int ticketsInPool;
+
     public TicketPool() {
         this.tickets = new LinkedList<>();
     }
 
     public TicketPool(int totalTickets, int capacity) {
         this.tickets = Collections.synchronizedList(new LinkedList<>());
-        this.totalTicketsRemaining = totalTickets;
+        this.ticketsRemaining = totalTickets;
         this.maxTicketCapacity = capacity;
     }
 
     public void addTicket(int vendorId) throws InterruptedException {
         lock.lock();
         try {
-            while (tickets.size() >= maxTicketCapacity || totalTicketsRemaining <= 0) {
-                if (totalTicketsRemaining <= 0) {
+            while (tickets.size() >= maxTicketCapacity || ticketsRemaining <= 0) {
+                if (ticketsRemaining <= 0) {
                     System.out.println("Vendor-" + (vendorId) + " tried to add tickets but no tickets available.");
                     TicketPool.writeLog("Vendor-" + (vendorId) + " tried to add tickets but no tickets available.");
                     return;
@@ -49,7 +52,8 @@ public class TicketPool {
             }
             int ticketId = nextTicketId.getAndIncrement();
             tickets.add(ticketId);
-            totalTicketsRemaining--;
+            ticketsRemaining--;
+            ticketsInPool++;
             System.out.println("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
             writeLog("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
             notEmpty.signalAll();
@@ -67,6 +71,8 @@ public class TicketPool {
                 notEmpty.await();
             }
             int ticketId = tickets.remove(0);
+            ticketsInPool--;
+            ticketsSold++;
             System.out.println("Customer " + customerId + " bought ticket: " + ticketId + ", Tickets available: " + tickets.size());
             writeLog("Customer " + customerId + " bought ticket: " + ticketId + ", Tickets available: " + tickets.size());
             notFull.signalAll();
@@ -75,13 +81,14 @@ public class TicketPool {
         }
     }
 
-    public int getTotalTicketsRemaining() {
-        lock.lock();
-        try {
-            return totalTicketsRemaining;
-        } finally {
-            lock.unlock();
-        }
+    public synchronized int getTicketsRemaining() {
+        return ticketsRemaining;
+    }
+    public synchronized int getTicketsSold() {
+        return ticketsSold;
+    }
+    public synchronized int getTicketsInPool() {
+        return ticketsInPool;
     }
 
     public static void writeLog(String msg) {
@@ -90,7 +97,7 @@ public class TicketPool {
 
         synchronized (inMemoryLogs) {
             inMemoryLogs.add(logMsg);
-            if (inMemoryLogs.size() > 100){
+            if (inMemoryLogs.size() > 500) {
                 inMemoryLogs.remove(0);
             }
         }

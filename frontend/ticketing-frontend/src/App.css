@@ -14,30 +14,34 @@ body {
   color: #007bff;
 }
 
-.container {
+.main-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
   margin: 20px;
 }
 
-.config-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.config-panel,
+.status-panel,
+.logs-section {
   background-color: #fff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+}
+
+.config-panel,
+.status-panel {
+  flex: 1 1 300px;
   border: 1px solid red;
 }
 
-.config-panel h2 {
-  margin-bottom: 20px;
+.config-panel h2,
+.status-panel h2,
+.logs-section h2 {
+  margin: 15px;
   color: #333;
 }
 
@@ -64,23 +68,22 @@ body {
   border-radius: 0.5rem;
 }
 
-.status-section {
+.status-panel {
   flex: 1;
   background-color: #fff;
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
   max-width: 400px;
-  border: 1px solid red;
 }
 
-.status-section div {
+.status-panel div {
   background-color: #f1f1f1;
   border-radius: 0.5rem;
   margin: 10px 0;
 }
 
-.status-section h4 {
+.status-panel h4 {
   margin: 0 0 5px;
   color: #333;
   padding: 5px;
@@ -88,7 +91,7 @@ body {
   border: 1px solid red;
 }
 
-.status-section p {
+.status-panel p {
   text-align: center;
   padding-bottom: 1rem;
 }
@@ -123,31 +126,19 @@ button:disabled {
 }
 
 .logs-section {
-  background-color: #fff;
+  background-color: #f9f9f9;
   padding: 20px;
   margin-top: 20px;
   text-align: left;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid green;
-  width: 100%;
-  max-width: 800px;
-}
-
-.logs-section h2 {
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.logs-container {
+  width: 95vw;
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
-  background-color: #f9f9f9;
 }
 
-.logs-section p {
+.logs-container p {
   margin: 5px 0;
   font-size: 0.9rem;
   color: #555;

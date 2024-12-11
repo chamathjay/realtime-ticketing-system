@@ -63,7 +63,7 @@ public class ConfigLoader {
             try {
                 System.out.print(prompt);
                 value = sc.nextInt();
-                if (value < 0) {
+                if (value <= 0) {
                     System.err.println("Value must be greater than 0. Please try again.");
                 }
             } catch (InputMismatchException e) {

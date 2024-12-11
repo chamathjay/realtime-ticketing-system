@@ -9,11 +9,15 @@ interface ConfigPanelProps {
 }
 
 const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
-  const [totalTickets, setTotalTickets] = useState<number>(10);
-  const [maxTicketCapacity, setMaxTicketCapacity] = useState<number>(7);
-  const [releaseRate, setReleaseRate] = useState<number>(1);
-  const [retrievalRate, setRetrievalRate] = useState<number>(2);
+  const [totalTickets, setTotalTickets] = useState<number>(100);
+  const [maxTicketCapacity, setMaxTicketCapacity] = useState<number>(50);
+  const [ticketReleaseRate, setReleaseRate] = useState<number>(1);
+  const [customerRetrievalRate, setRetrievalRate] = useState<number>(2);
   const [isSimulationRunning, setSimulationRunning] = useState<boolean>(false);
+
+  const [ticketsAvailable, setTicketsAvailable] = useState<number>(0);
+  const [ticketsSold, setTicketsSold] = useState<number>(0);
+  const [ticketsInPool, setTicketsInPool] = useState<number>(0);
 
   const backendUrl = "http://localhost:8080/api/ticketing";
 
@@ -23,8 +27,8 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
       const config = {
         totalTickets,
         maxTicketCapacity,
-        releaseRate,
-        retrievalRate,
+        ticketReleaseRate,
+        customerRetrievalRate,
       };
       console.log("Simulation Config: ", config);
       await api.post(`${backendUrl}/start`, config);
@@ -49,6 +53,18 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
         ...prevLogs,
         "Error stopping simulation: " + error,
       ]);
+    }
+  };
+
+  const fetchStatus = async () => {
+    try {
+      const response = await api.get(`${backendUrl}/status`);
+      const { ticketsAvailable, ticketsSold, ticketsInPool } = response.data;
+      setTicketsAvailable(ticketsAvailable);
+      setTicketsSold(ticketsSold);
+      setTicketsInPool(ticketsInPool);
+    } catch (error) {
+      setLogs((prevLogs) => [...prevLogs, "Error fetching status: " + error]);
     }
   };
 
@@ -79,7 +95,10 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
 
   useEffect(() => {
     if (isSimulationRunning) {
-      const interval = setInterval(fetchLogs, 1000);
+      const interval = setInterval(() => {
+        fetchLogs();
+        fetchStatus();
+      }, 1000);
       return () => clearInterval(interval);
     }
   }, [isSimulationRunning]);
@@ -87,7 +106,7 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
   return (
     <>
       <h1 className="title">Ticketing Simulation</h1>
-      <div className="container">
+      <div className="main-container">
         <div className="config-panel">
           <h2>Configue the parameters:</h2>
           <div className="input-section">
@@ -116,7 +135,7 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
               <input
                 type="number"
                 placeholder="Ticket Release Rate"
-                value={releaseRate}
+                value={ticketReleaseRate}
                 onChange={(e) => setReleaseRate(Number(e.target.value))}
               />
             </label>
@@ -126,7 +145,7 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
               <input
                 type="number"
                 placeholder="Customer Retrieval Rate"
-                value={retrievalRate}
+                value={customerRetrievalRate}
                 onChange={(e) => setRetrievalRate(Number(e.target.value))}
               />
             </label>
@@ -143,19 +162,19 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
             </button>
           </div>
         </div>
-        <div className="status-section">
+        <div className="status-panel">
           <h2>Ticket Availability Status</h2>
           <div className="available-tickets">
             <h4>Available tickets in the System:</h4>
-            <p id="available-tickets-p">10</p>
+            <p id="available-tickets-p"> {ticketsAvailable} </p>
           </div>
           <div className="tickets-sold">
             <h4>Tickets Sold:</h4>
-            <p id="tickets-sold-p">3</p>
+            <p id="tickets-sold-p"> {ticketsSold} </p>
           </div>
           <div className="pool-tickets">
             <h4>Tickets in the pool:</h4>
-            <p id="pool-tickets-p">6</p>
+            <p id="pool-tickets-p"> {ticketsInPool} </p>
           </div>
         </div>
       </div>
