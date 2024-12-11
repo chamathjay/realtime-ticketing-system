@@ -8,10 +8,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class TicketStatus {
-    private int ticketsAvailable;
+    private int ticketsRemaining;
     private int ticketsSold;
     private int ticketsInPool;
-
-
 
 }

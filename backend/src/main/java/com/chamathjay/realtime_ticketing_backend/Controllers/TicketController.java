@@ -3,7 +3,7 @@ package com.chamathjay.realtime_ticketing_backend.Controllers;
 import com.chamathjay.realtime_ticketing_backend.Models.TicketStatus;
 import com.chamathjay.realtime_ticketing_backend.Services.TicketService;
 import com.chamathjay.realtime_ticketing_backend.cli.Config;
-import com.chamathjay.realtime_ticketing_backend.cli.TicketPool;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,15 +30,13 @@ public class TicketController {
                 config.getCustomerRetrievalRate(),
                 config.getMaxTicketCapacity()
         );
-        TicketPool.writeLog("Simulation started with parameters: " + config);
         return "Simulation started.";
     }
 
     @PostMapping("/stop")
     public String stopSimulation() {
         ticketService.stopSimulation();
-        TicketPool.writeLog("Simulation stopped.");
-        return "Simulation stopped.";
+        return "Simulation stopped?";
     }
 
     @GetMapping("/status")

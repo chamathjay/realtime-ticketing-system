@@ -54,8 +54,8 @@ public class TicketPool {
             tickets.add(ticketId);
             ticketsRemaining--;
             ticketsInPool++;
-            System.out.println("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
-            writeLog("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets available: " + tickets.size());
+            System.out.println("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets in pool: " + tickets.size());
+            writeLog("Vendor-" + (vendorId) + " added ticket: " + ticketId + ", Tickets in pool: " + tickets.size());
             notEmpty.signalAll();
         } finally {
             lock.unlock();
@@ -81,14 +81,31 @@ public class TicketPool {
         }
     }
 
-    public synchronized int getTicketsRemaining() {
-        return ticketsRemaining;
+    public int getTicketsRemaining() {
+        lock.lock();
+        try {
+            return ticketsRemaining;
+        } finally {
+            lock.unlock();
+        }
     }
-    public synchronized int getTicketsSold() {
-        return ticketsSold;
+
+    public int getTicketsSold() {
+        lock.lock();
+        try {
+            return ticketsSold;
+        } finally {
+            lock.unlock();
+        }
     }
-    public synchronized int getTicketsInPool() {
-        return ticketsInPool;
+
+    public int getTicketsInPool() {
+        lock.lock();
+        try {
+            return ticketsInPool;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public static void writeLog(String msg) {
