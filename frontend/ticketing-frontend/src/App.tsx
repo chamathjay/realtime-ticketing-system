@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ConfigPanel from "./components/ConfigPanel";
 import Logs from "./components/Logs";
-import api from "./api";
 
 const App: React.FC = () => {
   const [logs, setLogs] = useState<string[]>([]);
@@ -11,7 +10,7 @@ const App: React.FC = () => {
       <div className="config-container">
         <ConfigPanel logs={logs} setLogs={setLogs} />
       </div>
-      <div className="logs-section">
+      <div className="logs-container">
         <Logs logs={logs} />
       </div>
     </div>
