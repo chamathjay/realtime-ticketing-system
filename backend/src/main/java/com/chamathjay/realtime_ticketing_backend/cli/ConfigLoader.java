@@ -45,11 +45,11 @@ public class ConfigLoader {
 
         System.out.println("------------------------------------------------------------");
         int totalTickets = getPositiveInput(sc, "Enter Total Tickets: ");
-        int ticketReleaseRate = getPositiveInput(sc, "Enter Ticket Release Rate: ");
-        int customerRetrievalRate = getPositiveInput(sc, "Enter Customer Ticket Retrieval Rate: ");
+        int ticketReleaseRate = getPositiveInput(sc, "Enter Vendor Ticket Release Rate (seconds): ");
+        int customerRetrievalRate = getPositiveInput(sc, "Enter Customer Ticket Retrieval Rate (seconds): ");
         int maxTicketCapacity;
         do {
-            maxTicketCapacity = getPositiveInput(sc, "Enter Maximum Ticket Capacity: ");
+            maxTicketCapacity = getPositiveInput(sc, "Enter Maximum TicketPool Capacity: ");
 
         } while (maxTicketCapacity > totalTickets);
         System.out.println("------------------------------------------------------------");

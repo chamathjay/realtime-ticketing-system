@@ -35,7 +35,7 @@ public class MainCLI {
             sc.nextLine();
             sc.nextLine();
 
-            TicketPool pool = new TicketPool(config.getMaxTicketCapacity(), config.getTotalTickets());
+            TicketPool pool = new TicketPool(config.getTotalTickets(), config.getMaxTicketCapacity());
             TicketPool.writeLog("TicketPool initialized with max capacity: " + config.getMaxTicketCapacity());
 
             int vendorCount = 4;
@@ -45,7 +45,7 @@ public class MainCLI {
             Vendor[] vendors = new Vendor[vendorCount];
 
             for (int i = 0; i < vendorCount; i++) {
-                vendors[i] = new Vendor(pool, i + 1, config.getTicketReleaseRate());
+                vendors[i] = new Vendor(pool, i + 1, config);
                 vendorThreads[i] = new Thread(vendors[i]);
                 vendorThreads[i].start();
                 TicketPool.writeLog("Vendor thread " + (i + 1) + " started.");
@@ -55,7 +55,7 @@ public class MainCLI {
             Customer[] customers = new Customer[customerCount];
 
             for (int i = 0; i < customerCount; i++) {
-                customers[i] = new Customer(pool, i + 1, config.getCustomerRetrievalRate());
+                customers[i] = new Customer(pool, i + 1, config);
                 customerThreads[i] = new Thread(customers[i]);
                 customerThreads[i].start();
                 TicketPool.writeLog("Customer thread " + (i + 1) + " started.");

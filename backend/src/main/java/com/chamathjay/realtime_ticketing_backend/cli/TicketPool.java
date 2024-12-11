@@ -1,8 +1,6 @@
 package com.chamathjay.realtime_ticketing_backend.cli;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -13,11 +11,12 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TicketPool {
-    private List<Integer> tickets;
-    private int capacity;
+    private final List<Integer> tickets;
+    private int maxTicketCapacity;
     private int totalTicketsRemaining;
 
     private final AtomicInteger nextTicketId = new AtomicInteger(1);
+    public static final List<String> inMemoryLogs = Collections.synchronizedList(new LinkedList<>());
 
     private static final String LOG_FILE = "tickets_log.txt";
 
@@ -32,20 +31,20 @@ public class TicketPool {
     public TicketPool(int totalTickets, int capacity) {
         this.tickets = Collections.synchronizedList(new LinkedList<>());
         this.totalTicketsRemaining = totalTickets;
-        this.capacity = capacity;
+        this.maxTicketCapacity = capacity;
     }
 
     public void addTicket(int vendorId) throws InterruptedException {
         lock.lock();
         try {
-            while (tickets.size() >= capacity || totalTicketsRemaining <= 0) {
+            while (tickets.size() >= maxTicketCapacity || totalTicketsRemaining <= 0) {
                 if (totalTicketsRemaining <= 0) {
                     System.out.println("Vendor-" + (vendorId) + " tried to add tickets but no tickets available.");
-                    writeLog("Vendor-" + (vendorId) + " tried to add tickets but no tickets available.");
+                    TicketPool.writeLog("Vendor-" + (vendorId) + " tried to add tickets but no tickets available.");
                     return;
                 }
                 System.out.println("Vendor-" + vendorId + " tried to add tickets but the pool is full, waiting...");
-                writeLog("Vendor-" + vendorId + " tried to add tickets but the pool is full, waiting...");
+                TicketPool.writeLog("Vendor-" + vendorId + " tried to add tickets but the pool is full, waiting...");
                 notFull.await();
             }
             int ticketId = nextTicketId.getAndIncrement();
@@ -58,7 +57,6 @@ public class TicketPool {
             lock.unlock();
         }
     }
-
 
     public void removeTicket(int customerId) throws InterruptedException {
         lock.lock();
@@ -90,6 +88,12 @@ public class TicketPool {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String logMsg = timestamp + " - " + msg;
 
+        synchronized (inMemoryLogs) {
+            inMemoryLogs.add(logMsg);
+            if (inMemoryLogs.size() > 100){
+                inMemoryLogs.remove(0);
+            }
+        }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
             writer.write(logMsg);
             writer.newLine();
@@ -98,4 +102,5 @@ public class TicketPool {
         }
 
     }
+
 }
