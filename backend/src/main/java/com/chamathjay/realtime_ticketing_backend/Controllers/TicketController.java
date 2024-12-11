@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ticketing")
@@ -50,9 +48,8 @@ public class TicketController {
     }
 
     @GetMapping("/logs")
-    public List<String> getLogs(@RequestParam(required = false, defaultValue = "100") int limit) {
-        List<String> logs = ticketService.getLogs();
-        return (logs);
+    public List<String> getLogs() {
+        return (ticketService.getLogs());
     }
 
     @PostMapping("/reset")
