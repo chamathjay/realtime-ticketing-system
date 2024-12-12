@@ -9,19 +9,24 @@ interface ConfigPanelProps {
 }
 
 const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
-  const [totalTickets, setTotalTickets] = useState<number>(100);
-  const [maxTicketCapacity, setMaxTicketCapacity] = useState<number>(50);
-  const [ticketReleaseRate, setReleaseRate] = useState<number>(1);
-  const [customerRetrievalRate, setRetrievalRate] = useState<number>(2);
+  const [totalTickets, setTotalTickets] = useState<number>(0);
+  const [maxTicketCapacity, setMaxTicketCapacity] = useState<number>(0);
+  const [ticketReleaseRate, setReleaseRate] = useState<number>(0);
+  const [customerRetrievalRate, setRetrievalRate] = useState<number>(0);
   const [isSimulationRunning, setSimulationRunning] = useState<boolean>(false);
 
-  const [ticketsAvailable, setTicketsAvailable] = useState<number>(0);
+  const [ticketsRemaining, setTicketsRemaining] = useState<number>(0);
   const [ticketsSold, setTicketsSold] = useState<number>(0);
   const [ticketsInPool, setTicketsInPool] = useState<number>(0);
 
   const backendUrl = "http://localhost:8080/api/ticketing";
 
   const startSimulation = async () => {
+    if (!validateInputs()) {
+      alert("Please ensure all inputs are valid.");
+      return;
+    }
+
     try {
       setLogs([]);
       const config = {
@@ -59,8 +64,8 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
   const fetchStatus = async () => {
     try {
       const response = await api.get(`${backendUrl}/status`);
-      const { ticketsAvailable, ticketsSold, ticketsInPool } = response.data;
-      setTicketsAvailable(ticketsAvailable);
+      const { ticketsRemaining, ticketsSold, ticketsInPool } = response.data;
+      setTicketsRemaining(ticketsRemaining);
       setTicketsSold(ticketsSold);
       setTicketsInPool(ticketsInPool);
     } catch (error) {
@@ -93,12 +98,25 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
     }
   };
 
+  const validateInputs = () => {
+    return (
+      totalTickets > 0 &&
+      totalTickets < Number.MAX_SAFE_INTEGER &&
+      maxTicketCapacity > 0 &&
+      maxTicketCapacity < Number.MAX_SAFE_INTEGER &&
+      ticketReleaseRate > 0 &&
+      ticketReleaseRate < Number.MAX_SAFE_INTEGER &&
+      customerRetrievalRate > 0 &&
+      customerRetrievalRate < Number.MAX_SAFE_INTEGER
+    );
+  };
+
   useEffect(() => {
     if (isSimulationRunning) {
       const interval = setInterval(() => {
         fetchLogs();
         fetchStatus();
-      }, 1000);
+      }, 500);
       return () => clearInterval(interval);
     }
   }, [isSimulationRunning]);
@@ -108,7 +126,7 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
       <h1 className="title">Ticketing Simulation</h1>
       <div className="main-container">
         <div className="config-panel">
-          <h2>Configue the parameters:</h2>
+          <h2>Configure the parameters:</h2>
           <div className="input-section">
             <label>
               Total Number of Tickets in the System:
@@ -164,9 +182,9 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ setLogs }) => {
         </div>
         <div className="status-panel">
           <h2>Ticket Availability Status</h2>
-          <div className="available-tickets">
-            <h4>Available tickets in the System:</h4>
-            <p id="available-tickets-p"> {ticketsAvailable} </p>
+          <div className="tickets-remaining">
+            <h4>Tickets Remaining in the System:</h4>
+            <p id="tickets-remaining-p"> {ticketsRemaining} </p>
           </div>
           <div className="tickets-sold">
             <h4>Tickets Sold:</h4>
